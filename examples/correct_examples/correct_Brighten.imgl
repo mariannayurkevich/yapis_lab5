@@ -1,0 +1,37 @@
+proc brighten(value image src, value int factor, result image dst)
+{
+    int w = (int) get_width(src);
+    int h = (int) get_height(src);
+
+    dst = create_image(w, h);
+
+    for (int x = 0; x < w; x = x + 1) {
+        for (int y = 0; y < h; y = y + 1) {
+            pixel p = get_pixel(src, x, y);
+            color c = (color) p;
+
+            int rr = c.r + factor;
+            int r = clamp(rr, 0, 255);
+
+            int gg = c.g + factor;
+            int g = clamp(gg, 0, 255);
+
+            int bb = c.b + factor;
+            int b = clamp(bb, 0, 255);
+
+            color nc = to_color(r, g, b);
+            pixel np = (pixel) nc;
+
+            set_pixel(dst, x, y, np);
+        }
+    }
+}
+
+image src = load_image("doc/pics/pic1.jpg");
+image dst;
+int factor = 50;
+
+brighten(src, factor, dst);
+
+save_image(dst, "doc/pics/photo_bright.jpg");
+write("Brighten: saved photo_bright.jpg\n");

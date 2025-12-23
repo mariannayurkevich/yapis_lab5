@@ -1,0 +1,12 @@
+struct ImageProcessor {                  // Ошибка: пропущен идентификатор
+    public virtual proc apply(image img) -> image
+    {                                    // Ошибка: метод без тела (закрывающая скобка сразу)
+    }
+    
+    private int mode = 5;                // Ошибка: инициализация поля при объявлении (не по грамматике)
+}
+
+proc processImage() image img {          // Ошибка: тип возвращаемого значения в неправильном месте
+    int width height;                    // Ошибка: пропущена запятая между переменными
+    
+    return img;

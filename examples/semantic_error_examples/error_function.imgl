@@ -1,0 +1,27 @@
+proc calculate(value image img) -> int, bool {
+    int w = get_width(img);
+    int h = get_height(img);
+    
+    if (w > h) {
+        return w;                 // Ошибка: возвращает только int, но функция объявлена -> int, bool
+    } else {
+        return false;             // Ошибка: возвращает bool вместо int
+    }
+}
+
+proc swap(result image a, result image b) {
+    image temp = a;              // Ошибка: параметр result используется как value
+    a = b;
+    b = temp;
+}
+
+proc test() {
+    image img1 = load_image("test1.jpg");
+    image img2;                  // Ошибка: неинициализированная переменная
+    int size = get_size(img2);   // Ошибка: использование неинициализированной переменной
+    
+    int x, y;
+    x, y = 10;                   // Ошибка: несоответствие количества элементов при множественном присваивании
+    
+    swap(img1, img1);            // Ошибка: передача одного аргумента в оба параметра result
+}

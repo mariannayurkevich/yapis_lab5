@@ -1,0 +1,50 @@
+struct BoundingBox {
+    public int x1;
+    public int y1;
+    public int x2;
+    public int y2;
+
+    public proc BoundingBox(int x1, int y1, int x2, int y2) {
+        this.x1 = x1;
+        this.y1 = y1;
+        this.x2 = x2;
+        this.y2 = y2;
+    }
+}
+
+struct ImageAnalyzer {
+    private image data;
+    private BoundingBox area;
+
+    public proc ImageAnalyzer(image img, BoundingBox box) {
+        this.data = img;
+        this.area = box;
+    }
+
+    public proc calculateAverageBrightness() -> float {
+        int total = 0;
+        int count = 0;
+        int curr_x = this.area.x1;
+        
+        do {
+            int curr_y = this.area.y1;
+            while (curr_y < this.area.y2) {
+                pixel p = get_pixel(this.data, curr_x, curr_y);
+                color c = (color)p;
+                total = total + (int)c.r + (int)c.g + (int)c.b;
+                count = count + 3;
+                curr_y = curr_y + 1;
+            }
+            curr_x = curr_x + 1;
+        } until (curr_x >= this.area.x2);
+
+        return (float)total / (float)count;
+    }
+}
+
+image photo = load_image("doc/pics/pic2.jpg");
+BoundingBox zone = new BoundingBox(0, 0, 100, 100);
+ImageAnalyzer analyzer = new ImageAnalyzer(photo, zone);
+
+float brightness = analyzer.calculateAverageBrightness();
+write("Brightness is: ", brightness, ";");

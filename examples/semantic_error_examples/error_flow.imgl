@@ -1,0 +1,34 @@
+proc analyze(value image img) -> bool {
+    int w = get_width(img);
+    int h = get_height(img);
+    
+    if (w > 0 && h > 0) {
+        return true;
+    }                             // Ошибка: не все пути возвращают значение (нет else)
+    
+    for (int i = 0; i < w; i = i + 1) {
+        for (int j = 0; j < h; j = j + 1) {
+            pixel p = get_pixel(img, i, j);
+            color c = (color) p;
+            
+            if (c.r && c.g > 128) {  // Ошибка: смешивание bool и int в условии (c.r - int)
+                return false;
+            }
+        }
+    }
+    
+    image temp;                  // Ошибка: создание, но не использование
+    
+    int x = 100;
+    int y = x / 0;               // Ошибка: деление на ноль (потенциальное)
+    
+    bool result = !img;          // Ошибка: применение ! к типу image
+    return result;
+}
+
+proc accessTest() {
+    Image imgStruct = new Image(100, 200);
+    int secret = imgStruct.width;  // Ошибка: доступ к приватному полю извне структуры
+    
+    this.x = 10;                   // Ошибка: использование this вне метода структуры
+}

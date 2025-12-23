@@ -1,0 +1,31 @@
+struct Image {
+    private int width;
+    private int height;
+    
+    public proc init(int w, int h) {
+        width = w + "px";          // Ошибка типов: int + string
+        height = h;
+    }
+    
+    public proc getArea() -> int {
+        return width * height;
+    }
+}
+
+proc process(value image img) {
+    int area = img.getArea();      // Ошибка типов: вызов метода у типа image, а не структуры
+    write(area);
+}
+
+struct SpecialImage extends Image {
+    private string filter;
+    
+    override proc init(int w, int h) {  // Ошибка: переопределение конструктора без virtual
+        super(w, h);                    // Ошибка использования super: super в конструкторе
+        filter = "blur";
+    }
+}
+
+int main = 0;                     // Ошибка: использование зарезервированного имени
+Image img = new Image(100, 200);
+process(img);

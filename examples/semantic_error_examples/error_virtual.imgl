@@ -1,0 +1,40 @@
+struct A {
+    public int value;
+    
+    public proc setValue(int v) {
+        value = v;
+    }
+}
+
+struct B extends A {
+    public override proc setValue(int v) {  // Ошибка: override без virtual в родителе
+        value = v * 2;
+        super.setValue(v);                  // Ошибка: вызов super не из конструктора
+    }
+}
+
+proc scopeTest() {
+    if (true) {
+        int temp = 42;
+    }
+    write(temp);                           // Ошибка: temp вне области видимости
+    
+    for (int i = 0; i < 5; i = i + 1) {
+        int x = i * 2;
+    }
+    int x = 10;                            // Ошибка: повторное объявление (если в for своя область видимости)
+    
+    image img = create_image(100, 100);
+    int size = get_size(img);              // Предполагаем, что функция существует
+    int size = size + 1;                   // Ошибка: повторное объявление в той же области видимости
+}
+
+proc initializationErrors() {
+    int x = x + 1;                         // Ошибка: использование x в собственной инициализации
+    
+    image img1;
+    image img2 = img1;                     // Ошибка: копирование неинициализированной переменной
+    
+    A a = new A();
+    a.value = "text";                      // Ошибка: присваивание string полю типа int
+}

@@ -1,0 +1,91 @@
+proc threshold(value image src, value int lvl, value image dst) {
+    write("Running threshold with level: ", lvl, "\n");
+    
+    int w = (int) get_width(src);
+    int h = (int) get_height(src);
+    
+    for (int x = 0; x < w; x = x + 1) {
+        for (int y = 0; y < h; y = y + 1) {
+            
+            pixel p = get_pixel(src, x, y);
+            color c = (color) p;
+
+            int brightness = (c.r + c.g + c.b) / 3;
+
+            if (brightness > lvl) then {
+                color white = to_color(255, 255, 255);
+                set_pixel(dst, x, y, (pixel)white);
+            } else {
+                color black = to_color(0, 0, 0);
+                set_pixel(dst, x, y, (pixel)black);
+            }
+        }
+    }
+}
+
+proc avg_brightness(value image img) {
+    int w = (int) get_width(img);
+    int h = (int) get_height(img);
+    
+    int total_brightness = 0;
+    int pixel_count = 0;
+
+    for (int x = 0; x < w; x = x + 1) {
+        for (int y = 0; y < h; y = y + 1) {
+            pixel p = get_pixel(img, x, y);
+            color c = (color) p;
+            
+            int b = (c.r + c.g + c.b) / 3;
+            total_brightness = total_brightness + b;
+            pixel_count = pixel_count + 1;
+        }
+    }
+
+    int res = 0;
+    if (pixel_count > 0) then {
+        res = total_brightness / pixel_count;
+    } else {
+        res = 0;
+    }
+}
+
+
+write("Loading image...\n");
+image scene = load_image("pics/test.jpg");
+
+int w = (int) get_width(scene);
+int h = (int) get_height(scene);
+
+image thr_level = create_image(w, h);
+
+int start_level = 100;
+int target = 110;
+int iter = 0;
+int max_iter = 5;
+
+write("Start processing...\n");
+
+threshold(scene, start_level, thr_level);
+int current_avg = avg_brightness(thr_level);
+
+write("Initial Avg Brightness: ", current_avg, "\n");
+
+while ( current_avg > target && iter < max_iter ) {
+    write("Too bright (", current_avg, " > ", target, "). Increasing threshold.\n");
+    
+    start_level = start_level + 20; 
+    iter = iter + 1;
+    
+    threshold(scene, start_level, thr_level);
+    current_avg = avg_brightness(thr_level);
+}
+
+do {
+    write("Refining threshold: ", start_level, "\n");
+    start_level = start_level - 5;
+    threshold(scene, start_level, thr_level);
+    current_avg = avg_brightness(thr_level);
+} until ( current_avg > target || start_level <= 0 );
+
+save_image(thr_level, "pics/scene_threshold_final.jpg");
+write("Done! Iterations: ", iter, "\n");

@@ -1,0 +1,43 @@
+struct Base {
+    public virtual proc render(value image target) {
+        // базовая реализация
+    }
+}
+
+struct Derived extends Base {
+    private int mode;
+    
+    override proc render(value image target, int mode) {  // Ошибка: несовпадение сигнатуры
+        this.mode = mode;
+        if (mode) {                 // Ошибка: использование int как bool
+            target = target * 2;    // Ошибка: умножение изображения на int
+        }
+    }
+    
+    public proc process() {
+        int i = 0;
+        while (i < 10) {            // Ошибка: бесконечный цикл (i не изменяется)
+            write(i);
+        }
+        
+        image img;
+        render(img, 1);             // Ошибка: вызов с неправильным типом (img не инициализирован)
+        
+        int a, b, c;
+        a, b = 1, 2, 3;             // Ошибка: несоответствие количества элементов
+    }
+}
+
+proc typeMismatch() {
+    image img = load_image("test.jpg");
+    color bg = to_color(255, 255, 255);
+    
+    bool result = img == bg;        // Ошибка: сравнение image и color
+    int sum = img + 10;             // Ошибка: сложение image и int
+    
+    pixel p = get_pixel(img, 1000, 1000);  // Ошибка: выход за границы (предполагаем, что изображение меньше)
+    
+    for (int x = img; x < 10; x = x + 1) {  // Ошибка: использование image как int в инициализации цикла
+        write(x);
+    }
+}

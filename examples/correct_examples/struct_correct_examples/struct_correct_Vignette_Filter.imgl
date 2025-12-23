@@ -1,0 +1,56 @@
+struct VignetteConfig {
+    private int centerX;
+    private int centerY;
+    private float radius;
+
+    public proc VignetteConfig(int cx, int cy, float r) {
+        this.centerX = cx;
+        this.centerY = cy;
+        this.radius = r;
+    }
+
+    public proc getPower(int x, int y) -> float {
+        // Расчет расстояния до центра: (x-cx)^2 + (y-cy)^2
+        float dx = (float)(x - this.centerX);
+        float dy = (float)(y - this.centerY);
+        float dist = (dx ** 2.0) + (dy ** 2.0);
+        
+        float maxDistSq = this.radius ** 2.0;
+        if (dist > maxDistSq) {
+            return 0.0;
+        }
+        return 1.0 - (dist / maxDistSq);
+    }
+}
+
+proc apply_vignette(value image src, value VignetteConfig cfg, result image out) {
+    int w = get_width(src);
+    int h = get_height(src);
+    out = create_image(w, h);
+
+    for (int x = 0; x < w; x = x + 1) {
+        for (int y = 0; y < h; y = y + 1) {
+            pixel p = get_pixel(src, x, y);
+            color c = (color)p;
+            float power = cfg.getPower(x, y);
+
+            // Умножаем каждый канал на коэффициент затухания
+            int r = (int)((float)c.r * power);
+            int g = (int)((float)c.g * power);
+            int b = (int)((float)c.b * power);
+
+            set_pixel(out, x, y, (pixel)to_color(r, g, b));
+        }
+    }
+}
+
+image photo = load_image("pics/yuri.png");
+int w = get_width(photo);
+int h = get_height(photo);
+
+VignetteConfig config = new VignetteConfig(w / 2, h / 2, (float)w * 0.7);
+
+image res;
+apply_vignette(photo, config, res);
+save_image(res, "pics/vignette_result.jpg");
+write("Vignette filter applied successfully\n");

@@ -1,0 +1,65 @@
+struct BaseFilter {
+    public virtual proc processColor(color c) -> color {
+        return c;
+    }
+
+    public virtual proc getName() -> string {
+        return "Base";
+    }
+}
+
+struct NegativeFilter extends BaseFilter {
+    public override proc processColor(color c) -> color {
+        int r = 255 - (int)c.r;
+        int g = 255 - (int)c.g;
+        int b = 255 - (int)c.b;
+        return to_color(r, g, b);
+    }
+
+    public override proc getName() -> string {
+        return "Negative";
+    }
+}
+
+struct GrayFilter extends BaseFilter {
+    public override proc processColor(color c) -> color {
+        int avg = ((int)c.r + (int)c.g + (int)c.b) / 3;
+        return to_color(avg, avg, avg);
+    }
+
+    public override proc getName() -> string {
+        return "Grayscale";
+    }
+}
+
+proc run_filter(value image src, value BaseFilter f, result image dst) {
+    int w = get_width(src);
+    int h = get_height(src);
+    dst = create_image(w, h);
+    
+    write("Applying filter: ", f.getName(), "\n");
+
+    for (int x = 0; x < w; x = x + 1) {
+        for (int y = 0; y < h; y = y + 1) {
+            pixel p = get_pixel(src, x, y);
+            color old_c = (color)p;
+            color new_c = f.processColor(old_c);
+            set_pixel(dst, x, y, (pixel)new_c);
+        }
+    }
+}
+
+image input = load_image("doc/pics/pic5.png");
+image out1;
+image out2;
+
+NegativeFilter neg = new NegativeFilter();
+GrayFilter gray = new GrayFilter();
+
+run_filter(input, neg, out1);
+save_image(out1, "doc/pics/filter_neg.jpg");
+
+run_filter(input, gray, out2);
+save_image(out2, "doc/pics/filter_gray.jpg");
+
+write("All filters applied.\n");

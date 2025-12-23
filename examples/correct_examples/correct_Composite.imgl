@@ -1,0 +1,19 @@
+image canvas = load_image("doc/pics/pic3.jpg");
+
+write("Processing image logic...\n");
+int ax, ay, bx, by, rw, rh;
+
+image swapped_im = create_image(100, 100); 
+save_image(swapped_im, "doc/pics/poster_swapped.png");
+write("Swapped regions saved.\n");
+
+int W = (int) get_width(canvas);
+int H = (int) get_height(canvas);
+
+if ( (W > 2 * H) && (W >= 1024) ) then {
+    save_image(canvas, "doc/pics/poster_final_landscape.jpg");
+    write("Saved landscape final.\n");
+} else {
+    save_image(canvas, "doc/pics/poster_final_other.jpg");
+    write("Saved alternate final.\n");
+}
